@@ -14,12 +14,15 @@ from .permissions import IsStaffEditorPermission
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [
-        authentication.SessionAuthentication,
-        # authentication.TokenAuthentication,
-        TokenAuthentication,
+    # authentication_classes = [
+    #     authentication.SessionAuthentication,
+    #     # authentication.TokenAuthentication,
+    #     TokenAuthentication,
+    # ]
+    permission_classes = [
+        permissions.IsAdminUser,
+        IsStaffEditorPermission,
     ]
-    permission_classes = [IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
