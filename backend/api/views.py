@@ -17,6 +17,6 @@ def api_home(request, *args, **kwargs):
     if serializer.is_valid(raise_exception=True):
         instance = serializer.save()
         # instance = form.save()
-        print(instance.id)
+        # print(instance.id)
         return Response(serializer.data)
     return Response({'invalid': 'not good data'}, status=400)
