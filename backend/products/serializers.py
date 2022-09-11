@@ -19,14 +19,15 @@ class ProductSerializer(serializers.ModelSerializer):
             validators.validate_title_no_hello,
             validators.unique_product_title
         ])
-    name = serializers.CharField(source='title', read_only=True)
+    # name = serializers.CharField(source='title', read_only=True)
 
     class Meta:
         model = Product
         fields = ['pk',
                   'title',
                   'content',
-                  'name',
+                  #   'user',
+                  #   'name',
                   'price',
                   'sale_price',
                   'my_discount',
