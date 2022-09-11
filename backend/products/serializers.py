@@ -3,9 +3,23 @@ from rest_framework.reverse import reverse
 
 from .models import Product
 from . import validators
+from api.serializers import UserPublicSerializer
+
+
+class ProductInlineSerializer(serializers.Serializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='product-detail',
+        lookup_field='pk',
+        read_only=True
+    )
+    title = serializers.CharField(read_only=True)
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    owner = UserPublicSerializer(source='user', read_only=True)
+    related_product = ProductInlineSerializer(
+        source='user.product_set.all', read_only=True, many=True)
+    my_user_data = serializers.SerializerMethodField(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True)
     # url = serializers.SerializerMethodField(read_only=True)
     # edit_url = serializers.SerializerMethodField(read_only=True)
@@ -13,7 +27,7 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name='product-detail',
         lookup_field='pk',
     )
-    # email = serializers.EmailField(write_only=True)
+    # email = serializers.EmailField(source='user.email',  read_only=True)
     title = serializers.CharField(
         validators=[
             validators.validate_title_no_hello,
@@ -27,6 +41,7 @@ class ProductSerializer(serializers.ModelSerializer):
                   'title',
                   'content',
                   #   'user',
+                  'owner',
                   #   'name',
                   'price',
                   'sale_price',
@@ -34,7 +49,15 @@ class ProductSerializer(serializers.ModelSerializer):
                   'url',
                   #   'edit_url',
                   #   'email',
+                  'my_user_data',
+                  'related_product',
                   ]
+
+    def get_my_user_data(self, obj):
+        return {
+            'id': obj.user.id,
+            'username': obj.user.username,
+        }
 
     # def validate_<field_name>(self, value):
     # def validate_title(self, value):
